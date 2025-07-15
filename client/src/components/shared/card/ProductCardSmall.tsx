@@ -1,13 +1,14 @@
 import { PlusIcon } from '@heroicons/react/24/solid';
 import { useShoppingCart } from '@/hooks/useShoppingCart';
 import { useModal } from '@/hooks/useModal';
-import { classNames, priceWithSign } from '@/utils/helper';
+import { classNames, priceWithSign, formatRupiahTanpaDesimal } from '@/utils/helper';
 import { ProductCardProps } from './type';
+
 
 export default function ProductCardSmall({ coffee }: ProductCardProps) {
   // Shopping Cart
   const { items } = useShoppingCart();
-  const isSameItem = items?.filter((i) => i.product._id === coffee._id)[0];
+  const isSameItem = items?.filter((i) => i.product.id === coffee.id)[0];
   // Modal Provider
   const { showProductModal } = useModal();
 
@@ -30,7 +31,7 @@ export default function ProductCardSmall({ coffee }: ProductCardProps) {
             {coffee.displayName}
           </p>
           <p className="font-semibold text-teal-900">
-            {priceWithSign(coffee.price ?? 0)}
+            {priceWithSign(coffee.price)}
           </p>
       </div>
       <div className="absolute bottom-2 right-2">

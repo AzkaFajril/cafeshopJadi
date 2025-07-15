@@ -1,3 +1,5 @@
+
+
 import { useProduct } from '@/hooks/useProduct';
 import PopularCategoryList from './PopularCategoryList';
 
@@ -9,17 +11,16 @@ function shuffleArray<T>(array: T[]): T[] {
     .map(({ item }) => item);
 }
 
-export default function PopularHotDrinkList() {
+export default function PopularFoodEat() {
   // Product Provider
-  const { hotDrinks } = useProduct();
+  const { food } = useProduct();
 
-  // Acak hotDrinks sebelum diambil 4
-  const randomHotDrinks = hotDrinks ? shuffleArray(hotDrinks).slice(0, 4) : [];
+  const randomFood = food ? shuffleArray(food).slice(0, 4) : [];
 
   return (
     <PopularCategoryList
-      title="Popular Hot Drink"
-      coffees={randomHotDrinks}
+      title="Popular Food / Eat"
+      coffees={randomFood}
     />
   );
 }

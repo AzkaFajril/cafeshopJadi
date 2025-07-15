@@ -14,7 +14,7 @@ export default function PopularCategoryList({
     <div className="mt-8">
       <CategoryTitle>{title}</CategoryTitle>
       <div className="grid grid-cols sm:grid-cols-2 gap-4">
-        {coffees?.slice(0, 4)?.map((coffee) => (
+        {coffees.map(coffee => (
           <ProductCardHorizontal key={coffee.id} coffee={coffee} />
         ))}
       </div>

@@ -25,8 +25,7 @@ export const fakeTimer = (milliseconds: number = 1000): Promise<void> => {
       resolve();
     }, milliseconds);
   });
-};
-
+}
 export function formatRupiah(amount?: number) {
   if (typeof amount !== 'number' || isNaN(amount)) return '-';
   return amount.toLocaleString('id-ID', {
@@ -37,6 +36,7 @@ export function formatRupiah(amount?: number) {
   });
 }
 
-export function formatRupiahTanpaDesimal(amount: number) {
+export function formatRupiahTanpaDesimal(amount?: number) {
+  if (typeof amount !== 'number' || isNaN(amount) || amount <= 0) return '';
   return 'Rp' + amount.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 }

@@ -5,14 +5,16 @@ import Title6 from '@/components/shared/typo/Title6';
 import { CoffeeSize } from '@/types';
 import { coffeeSizeOptions } from '@/constants/constants';
 
-export default function ProductSizeSwitch() {
-  // Local State
-  const [size, setSize] = useState<CoffeeSize>(CoffeeSize.SMALL);
+interface ProductSizeSwitchProps {
+  selectedSize: string;
+  setSelectedSize: (size: string) => void;
+}
 
+export default function ProductSizeSwitch({ selectedSize, setSelectedSize }: ProductSizeSwitchProps) {
   return (
     <div>
       <Title6 className="mb-2">Size</Title6>
-      <RadioGroup value={size} onChange={setSize}>
+      <RadioGroup value={selectedSize} onChange={setSelectedSize}>
         <RadioGroup.Label className="sr-only">Coffee size</RadioGroup.Label>
         <div className="flex flex-row gap-4 ">
           {coffeeSizeOptions.map((option) => (

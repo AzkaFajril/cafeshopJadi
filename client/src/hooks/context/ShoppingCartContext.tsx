@@ -5,8 +5,8 @@ export interface ShoppingCartContextProps {
   // Cart Item
   items: CartItem[];
   addToCart: (product: CoffeeProduct, quantity: number) => void;
-  updateQuantity: (productId: string, newQuantity: number) => void;
-  removeFromCart: (productId: string) => void;
+  updateQuantity: (index: number, newQuantity: number) => void;
+  removeFromCart: (index: number) => void;
   clearCart: () => void;
   // Delivery Option
   deliOption: DeliOption;

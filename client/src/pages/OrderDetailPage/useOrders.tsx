@@ -11,14 +11,9 @@ export default function useOrder(id: string | undefined) {
     const getData = async () => {
       setLoding(true);
       await fakeTimer(1000);
-      try {
-        if (id) {
-          const res = await getOrderById(id);
-          setData(res);
-        }
-      } catch (error) {
-        console.error('Error fetching order:', error);
-        setData(null);
+      const res = getOrderById(id!);
+      if(res){
+        setData(res);
       }
       setLoding(false);
     };

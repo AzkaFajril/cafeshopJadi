@@ -18,43 +18,37 @@ const ShoppingCartProvider: React.FC<ShoppingCartProviderProps> = ({
   const cartItemIds = items?.map((ci) => ci.product.id);
   const itemCount = items.length;
   const subTotal = getSumFromArr(
-    items?.map((item) => item.product.price * item.quantity)
+    items?.map((item) => {
+      const productWithSizes = item.product as any;
+      const sizes = productWithSizes.sizes as { name: string; price: number }[] | undefined;
+      let price = item.product.price;
+      if (sizes && sizes.length > 0 && item.size) {
+        const sizeObj = sizes.find(s => s.name?.toLowerCase() === item.size?.toLowerCase());
+        if (sizeObj) price = sizeObj.price;
+      }
+      return price * item.quantity;
+    })
   );
   const deliFee = deliOption === DeliOption.DELIVER ? defaultDeliFee : 0;
   const totalPayment = subTotal + deliFee;
 
-  const addToCart = (product: CoffeeProduct, quantity: number) => {
-    if (!cartItemIds.includes(product.id)) {
-      const newItem: CartItem = {
-        product,
-        quantity,
-      };
-      setItems((prevCart) => [...prevCart, newItem]);
-    } else {
-      updateQuantity(product.id, quantity);
-    }
+  const addToCart = (product: CoffeeProduct, quantity: number, size: string) => {
+    const newItem: CartItem = {
+      product,
+      quantity,
+      size,
+    };
+    setItems((prevCart) => [...prevCart, newItem]);
   };
 
-  const updateQuantity = (productId: string, newQuantity: number) => {
+  const updateQuantity = (index: number, newQuantity: number) => {
     setItems((prevCart) =>
-      prevCart.map((item) => {
-        if (item.product.id === productId) {
-          const newItem: CartItem = {
-            ...item,
-            quantity: newQuantity,
-          };
-          return newItem;
-        } else {
-          return item;
-        }
-      })
+      prevCart.map((item, i) => (i === index ? { ...item, quantity: newQuantity } : item))
     );
   };
 
-  const removeFromCart = (productId: string) => {
-    setItems((prevCart) =>
-      prevCart.filter((item) => item.product.id !== productId)
-    );
+  const removeFromCart = (index: number) => {
+    setItems((prevCart) => prevCart.filter((_, i) => i !== index));
   };
 
   const updateDeliOption = useCallback((value: DeliOption) => {

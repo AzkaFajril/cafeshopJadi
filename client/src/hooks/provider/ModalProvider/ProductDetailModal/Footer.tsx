@@ -4,12 +4,13 @@ import ButtonFilled from '@/components/shared/button/ButtonFilled';
 import CounterInput from '@/components/shared/CounterInput';
 import { useShoppingCart } from '@/hooks/useShoppingCart';
 
-interface ProductDetailModalProps {
+interface ProductDetailModalFooterProps {
   product: CoffeeProduct;
   onClose: () => void;
+  selectedSize: string;
 }
 
-export default function Footer({ product, onClose }: ProductDetailModalProps) {
+export default function Footer({ product, onClose, selectedSize }: ProductDetailModalFooterProps) {
   // Shopping Cart
   const { addToCart } = useShoppingCart();
   // Local State
@@ -22,7 +23,7 @@ export default function Footer({ product, onClose }: ProductDetailModalProps) {
   };
 
   const handelAddToCart = () => {
-    addToCart(product, quantity);
+    addToCart(product, quantity, selectedSize);
     onClose();
   };
 

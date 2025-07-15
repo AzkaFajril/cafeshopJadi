@@ -28,6 +28,10 @@ export const createProduct = async (productData: any, token: string) => {
 };
 
 export async function fetchProducts() {
-  const res = await axios.get('/products');
-  return res.data; // array of products
+  const res = await axios.get('http://localhost:5000/product');
+  // Pastikan setiap produk punya field id yang unik
+  return res.data.map((item: any) => ({
+    ...item,
+    id: item._id || item.id, // gunakan _id dari MongoDB jika ada
+  }));
 }

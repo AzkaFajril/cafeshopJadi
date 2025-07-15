@@ -1,82 +1,100 @@
-import axios from 'axios';
-import { DeliveryOrder, Customer, OrderItem, DeliOption } from '@/types';
+import { v4 as uuidv4 } from 'uuid';
+import { DeliveryOrder } from '@/types';
+import { getCoffeeById } from './product';
 
-const API_URL = 'http://localhost:5000/payment';
+const keyName = 'coffee-shop-orders';
 
-// Transform backend Payment model to frontend DeliveryOrder type
-function transformPaymentToDeliveryOrder(payment: any): DeliveryOrder {
-  const customer: Customer = {
-    id: payment.userId._id || payment.userId,
-    name: payment.userId.name || 'Unknown',
-    address: payment.deliveryAddress || '',
-    coordinates: { lat: 0, lng: 0 } // Default coordinates
-  };
+const sortByDate = (list: DeliveryOrder[]): DeliveryOrder[] => {
+  return list.sort((a, b) => {
+    const aDate = new Date(a.date).getTime();
+    const bDate = new Date(b.date).getTime();
+    return bDate - aDate;
+  });
+};
 
-  const items: OrderItem[] = payment.items.map((item: any) => ({
-    productId: item._id || '',
-    productName: item.name || '',
-    quantity: item.quantity || 0,
-    price: item.price || 0
-  }));
+export function getOrderList(): DeliveryOrder[] {
+  try {
+    const value = window.localStorage.getItem(keyName);
+    if (value) {
+      const orders = JSON.parse(value) as DeliveryOrder[];
+      const sortedList = sortByDate(orders);
+
+      return sortedList;
+    }
+    return [];
+  } catch (err) {
+    console.log('Error:: getOrderList :', err);
+    return [];
+  }
+}
+
+export function getOrderById(id: string): DeliveryOrder | null {
+  try {
+    const orders = getOrderList();
+
+    const order = orders?.filter((o) => o.id === id)?.[0];
+    return order?.id ? order : null;
+  } catch (err) {
+    console.log('Error:: getOrderById :', err);
+    return null;
+  }
+}
+
+export function getOrderCount(): number {
+  try {
+    const orders = getOrderList();
+    return orders?.length || 0;
+  } catch (err) {
+    console.log('Error:: getOrderCount :', err);
+    return 0;
+  }
+}
+
+const shortRandomUUID = (): string => {
+  const uuid = uuidv4();
+  return uuid.split('-').join('').substring(0, 8);
+};
+
+const makeFakeOrder = (newOrder: TAddOrder): DeliveryOrder => {
+  // Id
+  const id = shortRandomUUID();
+  // Date
+  const currentDate = new Date();
+  const date = currentDate.toLocaleString('en-US');
+  // Image
+  const firstItem = newOrder.items[0];
+  const image = getCoffeeById(firstItem.productId).image;
 
   return {
-    id: payment._id,
-    customer,
-    items,
-    deliOption: payment.deliveryOption === 'delivery' ? DeliOption.DELIVER : DeliOption.PICK_UP,
-    paymentMethod: payment.paymentMethod || 'cash',
-    totalPayment: payment.totalAmount || 0,
-    date: new Date(payment.createdAt).toLocaleDateString(),
-    image: '/images/coffee/hot-americano.jpeg', // Default image
-    status: payment.status || 'pending'
+    ...newOrder,
+    id,
+    date,
+    image,
   };
+};
+
+export type TAddOrder = Omit<DeliveryOrder, 'id' | 'date' | 'image'>;
+
+export function addOrder(newOrder: TAddOrder): DeliveryOrder | null {
+  try {
+    const oldOrders = getOrderList();
+    const order = makeFakeOrder(newOrder);
+    const mergeData: DeliveryOrder[] = [...oldOrders, order];
+
+    window.localStorage.setItem(keyName, JSON.stringify(mergeData));
+
+    return order;
+  } catch (err) {
+    console.log('Error:: addOrder :', err);
+
+    return null;
+  }
 }
 
-export async function getOrderList(): Promise<DeliveryOrder[]> {
-  const token = localStorage.getItem('coffee-shop-auth-token');
-  const res = await axios.get(`${API_URL}/orders`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  
-  // Transform the data to match frontend type
-  return res.data.map(transformPaymentToDeliveryOrder);
-}
-
-export async function getOrderById(id: string): Promise<DeliveryOrder> {
-  const token = localStorage.getItem('coffee-shop-auth-token');
-  const res = await axios.get(`${API_URL}/orders/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  
-  // Transform the data to match frontend type
-  return transformPaymentToDeliveryOrder(res.data);
-}
-
-export async function addOrder(newOrder: any): Promise<DeliveryOrder> {
-  const token = localStorage.getItem('coffee-shop-auth-token');
-  
-  // Transform frontend order data to backend format
-  const backendOrder = {
-    items: newOrder.items.map((item: OrderItem) => ({
-      name: item.productName,
-      quantity: item.quantity,
-      price: item.price,
-      size: 'medium' // Default size
-    })),
-    totalAmount: newOrder.totalPayment,
-    paymentMethod: newOrder.paymentMethod,
-    deliveryAddress: newOrder.customer.address,
-    deliveryOption: newOrder.deliOption
-  };
-
-  const res = await axios.post(`${API_URL}/create-order`, backendOrder, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  
-  // Transform the response to match frontend type
-  return transformPaymentToDeliveryOrder(res.data);
-}
-
-export async function removeAllOrders(): Promise<void> {
-  // Opsional: implementasi jika backend mendukung hapus semua order user
+export function removeAllOrders(): void {
+  try {
+    window.localStorage.removeItem(keyName);
+  } catch (err) {
+    console.log('Error:: removeAllOrders :', err);
+  }
 }

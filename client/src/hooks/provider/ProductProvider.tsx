@@ -21,15 +21,15 @@ const ProductProvider: React.FC<ProductProviderProps> = ({ children }) => {
   const isHot: CoffeeProduct[] = coffees?.filter((c) => c.type === CoffeeType.Hot);
   const desserts: CoffeeProduct[] = coffees?.filter((c) => c.category === 'dessert' || c.category === 'desserts');
   const coldDrinks: CoffeeProduct[] = coffees?.filter((c) => c.category === 'coldDrinks');
+  const food: CoffeeProduct[] = coffees?.filter((c) => c.category === 'food');
 
   // Get Coffee List
   useEffect(() => {
-    const fetchCoffeeList = async () => {
+    async function loadProducts() {
       const data = await getAllCoffee();
-      setCoffees(data);
-    };
-
-    fetchCoffeeList();
+      setCoffees(data); // data sudah pasti id unik
+    }
+    loadProducts();
   }, []);
 
   const value = useMemo(
@@ -43,6 +43,7 @@ const ProductProvider: React.FC<ProductProviderProps> = ({ children }) => {
       desserts,
       coldDrinks,
       hotDrinks,
+      food,
     }),
     [coffees]
   );

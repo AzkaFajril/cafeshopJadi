@@ -3,7 +3,8 @@ import SearchBox from './SearchBox';
 import PopularProductList from './PopularProductList';
 import PopularHotDrinkList from './PopularHotDrinkList';
 import PopularColdDrinkList from './PopularColdDrinkList';
-import PopularDessertList from './PopularDessertList';
+import PopularDesserts from './PopularDerrets';
+import PopularFoodEat from './PopularFoodeat';
 
 export default function HomePage() {
   return (
@@ -12,8 +13,9 @@ export default function HomePage() {
       <SearchBox />
       <PopularProductList />
       <PopularHotDrinkList />
-      <PopularColdDrinkList />
-      <PopularDessertList />
+      <PopularColdDrinkList/>
+      <PopularDesserts />
+      <PopularFoodEat />
     </div>
   );
 }

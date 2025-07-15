@@ -1,11 +1,19 @@
 import { CoffeeProduct } from '@/types';
-import { priceWithSign } from '@/utils/helper';
+import { priceWithSign, formatRupiahTanpaDesimal } from '@/utils/helper';
 
 interface ProductInfoProps {
   product: CoffeeProduct;
+  selectedSize: string;
 }
 
-export default function ProductInfo({ product }: ProductInfoProps) {
+export default function ProductInfo({ product, selectedSize }: ProductInfoProps) {
+  const productWithSizes = product as any;
+  const sizes = productWithSizes.sizes as { name: string; price: number }[] | undefined;
+  let price = product.price;
+  if (sizes && sizes.length > 0) {
+    const sizeObj = sizes.find(s => s.name?.toLowerCase() === selectedSize?.toLowerCase());
+    if (sizeObj) price = sizeObj.price;
+  }
   return (
     <div>
       <p className="text-xl font-semibold text-neutral-800">
@@ -15,7 +23,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         {product?.description}
       </p>
       <p className="text-lg font-semibold text-primary-600 mt-2">
-        {priceWithSign(product?.price || 0)}
+        {formatRupiahTanpaDesimal(price)}
       </p>
     </div>
   );

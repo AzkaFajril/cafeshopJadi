@@ -11,6 +11,7 @@ export default function PaymentSummary() {
       <Title6 className="mb-2">Payment Summary</Title6>
       <PriceRow lable="Sub Total" amount={subTotal} />
       {!!deliFee && <PriceRow lable="Delivery Fee" amount={deliFee} />}
+      <PriceRow lable="Total" amount={subTotal + deliFee} />
     </div>
   );
 }

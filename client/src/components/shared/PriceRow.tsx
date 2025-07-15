@@ -1,4 +1,4 @@
-import { priceWithSign } from '@/utils/helper';
+import { priceWithSign, formatRupiahTanpaDesimal } from '@/utils/helper';
 import LabelValueRow from './LabelValueRow';
 
 interface PriceRowProps {
@@ -6,5 +6,5 @@ interface PriceRowProps {
   amount: number;
 }
 export default function PriceRow({ lable, amount }: PriceRowProps) {
-  return <LabelValueRow lable={lable} value={priceWithSign(amount)} />;
+  return <LabelValueRow lable={lable} value={formatRupiahTanpaDesimal(amount)} />;
 }

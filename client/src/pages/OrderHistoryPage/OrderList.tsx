@@ -3,27 +3,10 @@ import { classNames } from '@/utils/helper';
 import OrderCard from './OrderCard';
 import useOrders from './useOrders';
 import EmptyOrder from './EmptyOrder';
-import { DeliveryOrder } from '@/types';
 
-interface OrderListProps {
-  searchTerm?: string;
-}
-
-export default function OrderList({ searchTerm = '' }: OrderListProps) {
+export default function OrderList() {
   const { data, isLoading } = useOrders();
-  
-  // Filter orders based on search term
-  const filteredOrders = data.filter((order: DeliveryOrder) => {
-    if (!searchTerm) return true;
-    
-    const searchLower = searchTerm.toLowerCase();
-    const orderId = order.id.toLowerCase();
-    const orderItems = order.items.map(item => item.productName).join(' ').toLowerCase();
-    
-    return orderId.includes(searchLower) || orderItems.includes(searchLower);
-  });
-  
-  const orderCount = filteredOrders.length;
+  const orderCount = data.length;
 
   return (
     <>
@@ -31,7 +14,7 @@ export default function OrderList({ searchTerm = '' }: OrderListProps) {
         <div className="w-full">
           {orderCount > 0 ? (
             <ul>
-              {filteredOrders?.map((order, index) => (
+              {data?.map((order, index) => (
                 <li
                   key={index}
                   className={classNames(

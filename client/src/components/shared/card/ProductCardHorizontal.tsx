@@ -1,13 +1,15 @@
 import { PlusIcon } from '@heroicons/react/24/solid';
 import { useShoppingCart } from '@/hooks/useShoppingCart';
 import { useModal } from '@/hooks/useModal';
-import { classNames, priceWithSign } from '@/utils/helper';
+import { classNames, priceWithSign, formattedPrice, formatRupiahTanpaDesimal } from '@/utils/helper';
 import { ProductCardProps } from './type';
+
+
 
 export default function ProductCardHorizontal({ coffee }: ProductCardProps) {
   // Shopping Cart
   const { items } = useShoppingCart();
-  const isSameItem = items?.filter((i) => i.product._id === coffee._id)[0];
+  const isSameItem = items?.filter((i) => i.product.id === coffee.id)[0];
   // Modal Provider
   const { showProductModal } = useModal();
 
@@ -15,6 +17,9 @@ export default function ProductCardHorizontal({ coffee }: ProductCardProps) {
     showProductModal(coffee);
   };
 
+  const coffeeWithSizes = coffee as any;
+const smallPrice = (coffeeWithSizes.sizes?.find?.((s: any) => s.name?.toLowerCase?.() === 'small')?.price) ?? coffee.price;
+const formattedPrice = formatRupiahTanpaDesimal(smallPrice);
   return (
     <button
       onClick={handleClick}
@@ -35,7 +40,7 @@ export default function ProductCardHorizontal({ coffee }: ProductCardProps) {
           </p>
         </div>
         <p className="text-left font-semibold text-teal-900">
-          {priceWithSign(coffee.price)}
+          {formattedPrice}
         </p>
       </div>
       <div className="absolute bottom-2 right-2">
@@ -43,7 +48,7 @@ export default function ProductCardHorizontal({ coffee }: ProductCardProps) {
           "inline-flex items-center justify-center w-7 h-7 rounded-full",
           isSameItem? "text-primary border border-primary" : "bg-primary text-white"
         )}>
-          {isSameItem ? <span className='text-sm font-semibold'>{isSameItem.quantity}</span> : <PlusIcon className="h-5 w-5" />}
+          <PlusIcon className="h-5 w-5" />
         </div>
       </div>
     </button>
