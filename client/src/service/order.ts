@@ -99,14 +99,40 @@ export function removeAllOrders(): void {
   }
 }
 
-export async function createOrder(orderData: any) {
-  const response = await fetch('http://localhost:5000/api/orders', {
+export async function createOrder(orderData) {
+  const userId = localStorage.getItem('userId');
+  if (!userId) {
+    alert('Anda harus login terlebih dahulu!');
+    throw new Error('User belum login');
+  }
+  // Validasi orderData sebelum kirim
+  if (!orderData.items || !Array.isArray(orderData.items) || orderData.items.length === 0) {
+    alert('Keranjang kosong!');
+    throw new Error('Items kosong');
+  }
+  if (!orderData.paymentMethod) {
+    alert('Pilih metode pembayaran!');
+    throw new Error('paymentMethod kosong');
+  }
+  if (!orderData.totalPayment) {
+    alert('Total pembayaran kosong!');
+    throw new Error('totalPayment kosong');
+  }
+  const res = await fetch('http://localhost:5000/api/orders', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(orderData),
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ...orderData, userId }),
   });
-  if (!response.ok) throw new Error('Gagal membuat order');
-  return response.json();
+  if (!res.ok) {
+    const err = await res.json();
+    alert(err.message || 'Gagal membuat order');
+    throw new Error(err.message || 'Gagal membuat order');
+  }
+  return res.json();
+}
+
+export async function getOrderHistoryByUser(userId: string) {
+  const res = await fetch(`http://localhost:5000/api/orders/by-user?userId=${userId}`);
+  if (!res.ok) throw new Error('Gagal mengambil order history');
+  return res.json();
 }

@@ -10,6 +10,7 @@ const OrderItemSchema = new mongoose.Schema({
 });
 
 const OrderSchema = new mongoose.Schema({
+  userId: { type: String, required: true }, // <-- Tambahkan ini
   orderId: { type: String, required: true, unique: true },
   tableNumber: String, // untuk in place
   customer: {

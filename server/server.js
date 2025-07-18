@@ -12,6 +12,7 @@ const cartRoutes = require('./routes/cart');
 const productRoutes = require('./routes/product');
 const inplaceOrderRoutes = require('./routes/inplaceOrder');
 const orderRoutes = require('./routes/order');
+const addressRoutes = require('./routes/address');
 const app = express();
 
 // Middleware
@@ -32,7 +33,9 @@ app.use('/cart', cartRoutes);
 app.use('/products', productRoutes);
 app.use('/api/inplace-order', inplaceOrderRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/address', addressRoutes);
 app.use('/admin', require('./routes/admin'));
+
 
 app.get('/', (req, res) => res.send('API is running'));
 

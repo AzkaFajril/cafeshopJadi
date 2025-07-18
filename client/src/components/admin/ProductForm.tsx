@@ -26,7 +26,7 @@ interface ProductFormProps {
 const categories = [
   { value: 'hotDrinks', label: 'Hot Drinks' },
   { value: 'coldDrinks', label: 'Cold Drinks' },
-  { value: 'food / eat', label: 'Food' },
+  { value: 'food', label: 'food / eat' },
   { value: 'desserts', label: 'Desserts' },
   { value: 'drink', label: 'Drink' },
 ];

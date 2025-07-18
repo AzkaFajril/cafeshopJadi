@@ -1,7 +1,7 @@
 import { useProduct } from '@/hooks/useProduct';
 import PopularCategoryList from './PopularCategoryList';
 
-export default function PopularColdDrinkList() {
+export default function PopularHotDrinkList() {
   // Product Provider
   const { coldDrinks } = useProduct();
 

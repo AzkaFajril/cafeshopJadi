@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 
-const userSchema = new mongoose.Schema({
-  googleId: String,
-  name: String,
+const UserSchema = new mongoose.Schema({
+  googleId: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
+  name: String,
   picture: String,
   role: { type: String, default: 'user', enum: ['user', 'admin'] },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
+}, {
+  timestamps: true // otomatis menambah createdAt dan updatedAt
 });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('User', UserSchema);

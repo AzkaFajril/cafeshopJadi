@@ -16,14 +16,17 @@ export default function PopularRandomList() {
   const { hotDrinks, coldDrinks, desserts, food } = useProduct();
 
   // Gabungkan semua produk
-  const allProducts = [
+  const Dringks = [
     ...(hotDrinks || []),
     ...(coldDrinks || []),
+  ];
+  const Makanan = [
     ...(desserts || []),
     ...(food || []),
   ];
 
-  const randomProducts = shuffleArray(allProducts).slice(0, 8);  // Product Provider
+  const randomProductsMakanan = shuffleArray(Makanan).slice(0, 8);  // Product Provider
+  const randomProducts = shuffleArray(Dringks).slice(0, 8);  // Product Provider
 
   return (
     <div className="mt-6">
@@ -32,6 +35,14 @@ export default function PopularRandomList() {
         {randomProducts?.slice(0, 4)?.map((coffee) => (
           <ProductCardBgImage key={coffee.id} coffee={coffee} />
         ))}
+      </div>
+        <div className='p-20'>
+      <CategoryTitle>Popular Drink</CategoryTitle>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {randomProductsMakanan?.slice(0, 4)?.map((coffee) => (
+          <ProductCardBgImage key={coffee.id} coffee={coffee} />
+        ))}
+      </div>
       </div>
     </div>
   );

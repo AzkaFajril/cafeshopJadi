@@ -110,12 +110,14 @@ export default function CheckoutModal({ show, onClose }: CheckoutModalProps) {
     await fakeTimer(2000);
     const newOrder = getOrderData();
     const orderData = {
-      id: uuidv4(),
-      ...newOrder,
+      ...newOrder, // pastikan newOrder sudah berisi items, paymentMethod, totalPayment
+      userId: localStorage.getItem('userId'),
       date: new Date().toLocaleString('en-US'),
       image: cartItems[0]?.product?.image || '',
       orderType: deliOption === DeliOption.IN_PLACE ? 'IN_PLACE' : deliOption === DeliOption.PICK_UP ? 'PICK_UP' : 'DELIVER',
     };
+    // HAPUS field id jika ada!
+    delete orderData.id;
     try {
       console.log("Order data:", orderData);
       const res = await fetch('http://localhost:5000/api/orders', {
@@ -126,11 +128,12 @@ export default function CheckoutModal({ show, onClose }: CheckoutModalProps) {
       const order = await res.json();
       addOrder(newOrder); // Simpan ke localStorage untuk history
       setLoading(false);
-      clearCart();
+      //clearCart();
       onClose();
       closeCartModal();
       showOrderStatusModal(order);
     } catch (err) {
+      console.error('Order error:', err);
       setLoading(false);
       alert('Gagal membuat order!');
     }

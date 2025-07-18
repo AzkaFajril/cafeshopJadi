@@ -1,15 +1,13 @@
-
-
 import { useProduct } from '@/hooks/useProduct';
 import PopularCategoryList from './PopularCategoryList';
 
-export default function PopularDesserts() {
+export default function PopularHotDrinkList() {
   // Product Provider
   const { desserts } = useProduct();
 
   return (
     <PopularCategoryList
-      title="Popular Desserts"
+      title="Popular DESSERTS"
       coffees={desserts?.slice(0, 4)}
     />
   );

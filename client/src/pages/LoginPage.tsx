@@ -5,31 +5,53 @@ import PageLoading from '@/components/shared/PageLoading';
 import Title1 from '@/components/shared/typo/Title1';
 import { useAuth } from '@/hooks/useAuth';
 import { AuthUser } from '@/types';
+import { useNavigate } from 'react-router-dom';
 
 export default function LoginPage() {
   // Auth Provider
   const { login: loginToApp } = useAuth();
   const [isLoading, setLoading] = useState(false);
   const [fbBtnClick, setFbBtnClick] = useState(false);
+  const navigate = useNavigate();
 
   const handleGLoginSuccess = async (tokenResponse: TokenResponse) => {
     setLoading(true);
     const { access_token } = tokenResponse;
 
-    const res = await getUserFromGoogleOAuthAPI(access_token);
-
+    // Kirim access_token ke backend
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: access_token }),
+      });
+      const data = await res.json();
     setLoading(false);
-    if (res?.email) {
-      console.log(res);
-      const loggedInUser: AuthUser = {
-        id: res.id,
-        name: res.name,
-        email: res.email,
-        image: res.picture,
-      };
-      loginToApp(loggedInUser, '/');
+      if (res.ok && data.user) {
+        // Simpan JWT dan user info ke localStorage
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userId', data.user._id); // WAJIB: simpan userId
+        console.log('userId yang disimpan:', data.user._id); // Tambahkan log ini
+        localStorage.setItem('userEmail', data.user.email);
+        localStorage.setItem('userName', data.user.name);
+        localStorage.setItem('userRole', data.user.role);
+        localStorage.setItem('userPicture', data.user.picture);
+        // Login ke context jika perlu
+        loginToApp({
+          id: data.user._id,
+          name: data.user.name,
+          email: data.user.email,
+          image: data.user.picture,
+          role: data.user.role,
+        }, data.redirectTo || '/');
+        // Redirect manual jika perlu
+        navigate(data.redirectTo || '/');
     } else {
-      console.log('Error');
+        alert(data.error || 'Login gagal');
+      }
+    } catch (err) {
+      setLoading(false);
+      alert('Login gagal');
     }
   };
 

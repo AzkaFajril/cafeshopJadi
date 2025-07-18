@@ -1,22 +1,36 @@
 import { useEffect, useState } from 'react';
-import { DeliveryOrder } from '@/types';
-import { fakeTimer } from '@/utils/helper';
-import { getOrderList } from '@/service/order';
+import { getOrderHistoryByUser } from '@/service/order';
 
 export default function useOrders() {
-  const [data, setData] = useState<DeliveryOrder[]>([]);
+  const [data, setData] = useState([]);
   const [isLoading, setLoding] = useState(false);
+  const [userId, setUserId] = useState(() => localStorage.getItem('userId'));
 
   useEffect(() => {
-    const getData = async () => {
-      setLoding(true);
-      const res = await fetch('http://localhost:5000/api/orders');
-      const orders = await res.json();
-      setData(orders);
-      setLoding(false);
-    };
-    getData();
+    function handleStorageChange() {
+      setUserId(localStorage.getItem('userId'));
+    }
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
+
+  useEffect(() => {
+    if (!userId) {
+      setData([]); // Kosongkan data jika userId tidak ada (logout)
+      setLoding(false);
+      return;
+    }
+    setLoding(true);
+    getOrderHistoryByUser(userId)
+      .then((orders) => {
+        setData(orders);
+        setLoding(false);
+      })
+      .catch(() => {
+        setData([]);
+        setLoding(false);
+      });
+  }, [userId]);
 
   return { data, isLoading };
 }

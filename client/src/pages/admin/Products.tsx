@@ -25,6 +25,15 @@ interface ProductFormData {
   isAvailable: boolean;
 }
 
+function uniqueById(array: Product[]): Product[] {
+  const seen = new Set();
+  return array.filter((item) => {
+    if (seen.has(item._id)) return false;
+    seen.add(item._id);
+    return true;
+  });
+}
+
 const Products: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -267,25 +276,28 @@ const Products: React.FC = () => {
           <option value="all">All Categories</option>
           <option value="hotDrinks">Hot Drinks</option>
           <option value="coldDrinks">Cold Drinks</option>
-          <option value="food">Food</option>
-          <option value="eat">Eat</option>
+          <option value="food">Food / Eat</option>
           <option value="desserts">Desserts</option>
-          <option value="dessert">Dessert</option>
         </select>
       </div>
 
       {/* Products Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {products
+        {uniqueById(
+          products
           .filter(product =>
-            (categoryFilter === 'all' || product.category === categoryFilter) &&
+              (categoryFilter === 'all' ||
+                (categoryFilter === 'food'
+                  ? (product.category === 'food' || product.category === 'eat')
+                  : product.category === categoryFilter)
+              ) &&
             (
               product.displayName.toLowerCase().includes(search.toLowerCase()) ||
               product.name.toLowerCase().includes(search.toLowerCase()) ||
               product.category.toLowerCase().includes(search.toLowerCase())
             )
           )
-          .map((product) => (
+        ).map((product) => (
           <div key={product._id} className="bg-white rounded-lg shadow-md overflow-hidden">
             <div className="relative">
               <img

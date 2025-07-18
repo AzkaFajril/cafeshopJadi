@@ -13,6 +13,7 @@ export interface AuthUser {
   name: string;
   email: string;
   image?: string;
+  role?: string; // 'user' | 'admin'
 }
 
 export interface UserWithAddress extends AuthUser {

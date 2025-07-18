@@ -1,25 +1,14 @@
 import { useProduct } from '@/hooks/useProduct';
 import PopularCategoryList from './PopularCategoryList';
 
-// Fungsi untuk mengacak array
-function shuffleArray<T>(array: T[]): T[] {
-  return array
-    .map((item) => ({ item, sort: Math.random() }))
-    .sort((a, b) => a.sort - b.sort)
-    .map(({ item }) => item);
-}
-
 export default function PopularHotDrinkList() {
   // Product Provider
   const { hotDrinks } = useProduct();
 
-  // Acak hotDrinks sebelum diambil 4
-  const randomHotDrinks = hotDrinks ? shuffleArray(hotDrinks).slice(0, 4) : [];
-
   return (
     <PopularCategoryList
       title="Popular Hot Drink"
-      coffees={randomHotDrinks}
+      coffees={hotDrinks?.slice(0, 4)}
     />
   );
 }

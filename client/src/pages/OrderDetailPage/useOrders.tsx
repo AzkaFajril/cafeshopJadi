@@ -8,19 +8,23 @@ export default function useOrder(id: string | undefined) {
   const [isLoading, setLoding] = useState(false);
 
   useEffect(() => {
+    if (!id) {
+      setData(null);
+      setLoding(false);
+      return;
+    }
     const getData = async () => {
       setLoding(true);
       await fakeTimer(1000);
-      const res = await getOrderById(id!);
+      const res = await getOrderById(id);
       if(res){
         setData(res);
+      } else {
+        setData(null);
       }
       setLoding(false);
     };
-
-    if (id) {
       getData();
-    }
   }, [id]);
 
   return { data, isLoading };

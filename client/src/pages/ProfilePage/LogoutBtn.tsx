@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { googleLogout } from '@react-oauth/google';
 import { ArrowRightStartOnRectangleIcon } from '@heroicons/react/24/outline';
 import { useAuth } from '@/hooks/useAuth';
-import { useUserAddress } from '@/hooks/useUserAddress';
+import { useUserAddress } from '@/hooks/provider/UserAddressProvider';
 import { removeAllOrders } from '@/service/order';
 import ConfirmDialog from '@/components/shared/dialog/ConfirmDialog';
 
@@ -10,7 +10,7 @@ export default function LogoutBtn() {
   // Auth Provider
   const { logout: logoutFromApp } = useAuth();
   // Address Provider
-  const { removeAddress } = useUserAddress();
+  const { clearAddress } = useUserAddress();
   // Confirm Dialog
   const [showLogoutCD, setShowLogoutCD] = useState(false);
 
@@ -19,14 +19,25 @@ export default function LogoutBtn() {
   };
 
   const handleLogoutConfirm = () => {
+    // Hapus semua data user
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('userPicture');
+    localStorage.removeItem('coffee-shop-auth-user');
+    localStorage.removeItem('coffee-shop-auth-user-address');
+    localStorage.removeItem('coffee-shop-orders');
     // Close Dialog
     setShowLogoutCD(false);
     // Call Google Logout Fuction
     googleLogout();
     // Clear LocalStorage Data
     logoutFromApp();
-    removeAddress();
+    clearAddress();
     removeAllOrders();
+    window.location.href = '/login'; // atau '/'
   };
 
   return (

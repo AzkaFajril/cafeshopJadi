@@ -10,6 +10,7 @@ router.get('/inplace', orderController.getInPlaceOrders);
 
 // Endpoint lain (create, get by id, dsb)
 router.post('/', orderController.createOrder);
+router.get('/by-user', orderController.getOrdersByUser); // <-- ini harus di atas!
 router.get('/:id', orderController.getOrderById);
 
 module.exports = router;

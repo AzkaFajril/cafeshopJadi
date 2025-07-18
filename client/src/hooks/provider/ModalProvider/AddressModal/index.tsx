@@ -1,15 +1,11 @@
-import { useState } from 'react';
-import { LatLng, UserAddress } from '@/types';
-import useDebounce from '@/hooks/useDebounce';
-import { useUserAddress } from '@/hooks/useUserAddress';
-import MapComponent from '@/components/shared/MapComponent';
+import { useState, useEffect } from 'react';
+import { useUserAddress } from '@/hooks/provider/UserAddressProvider'; // pastikan import dari provider baru
 import BaseModal from '@/components/shared/modal/BaseModal';
 import StickyModalHeader from '../StickyModalHeader';
 import FlexContainer from '../FlexContainer';
 import FullHeightContainer from '../FullHeightContainer';
 import ControlButtons from './ControlButtons';
 import InputBox from './InputBox';
-import useAddress from './useAddress';
 
 interface AddressModalProps {
   show: boolean;
@@ -17,50 +13,40 @@ interface AddressModalProps {
 }
 
 export default function AddressModal({ show, onClose }: AddressModalProps) {
-  // Auth Provider
   const { address: userAddress, updateAddress } = useUserAddress();
-  // Input
-  const [coordinate, setCoordinate] = useState<LatLng | null>(null);
-  const deferredCord = useDebounce(coordinate);
 
-  const { address, setAddress, isLoading } = useAddress(
-    deferredCord,
-    userAddress?.fullAddress || ''
-  );
+  // State input alamat, sync dengan context
+  const [address, setAddress] = useState(userAddress?.fullAddress || '');
+  const [coordinates, setCoordinates] = useState(userAddress?.coordinates || { lat: 0, lng: 0 });
 
-  const confirmBtnDisabled = !coordinate || address.length > 255;
+  // Sync input jika address dari context berubah (misal setelah login)
+  useEffect(() => {
+    setAddress(userAddress?.fullAddress || '');
+    setCoordinates(userAddress?.coordinates || { lat: 0, lng: 0 });
+  }, [userAddress]);
 
-  const handleCoordChange = (newCoor: LatLng) => {
-    setCoordinate(newCoor);
-  };
+  const confirmBtnDisabled = !address || address.length > 255;
 
-  const handelConfirm = () => {
-    if (coordinate) {
-      const newAddress: UserAddress = {
-        fullAddress: address,
-        coordinates: coordinate,
-      };
-      updateAddress(newAddress);
-      onClose();
-    }
+  const handleConfirm = async () => {
+    if (!address) return;
+    await updateAddress({ fullAddress: address, coordinates }); // Simpan ke context
+    onClose();
   };
 
   return (
-    <BaseModal show={show} onClose={() => {}} fullScreen>
+    <BaseModal show={show} onClose={onClose} fullScreen>
       <FlexContainer>
         <StickyModalHeader title="Change Address" onClose={onClose} />
         <FullHeightContainer>
           <InputBox
             value={address}
             onChange={setAddress}
-            isLoading={isLoading}
+            isLoading={false}
           />
-          <div className="w-full h-80 sm:h-72 bg-gray-300 rounded-lg overflow-hidden mt-4">
-            <MapComponent onCoordChange={handleCoordChange} />
-          </div>
+          {/* MAPS DIMATIKAN */}
           <ControlButtons
             onCancelClick={onClose}
-            onConfirmClick={handelConfirm}
+            onConfirmClick={handleConfirm}
             confirmBtnDisabled={confirmBtnDisabled}
           />
         </FullHeightContainer>

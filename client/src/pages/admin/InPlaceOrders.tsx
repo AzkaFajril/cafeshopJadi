@@ -10,6 +10,7 @@ const statusColors: Record<string, string> = {
 const InPlaceOrders: React.FC = () => {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'processing' | 'completed' | 'cancelled'>('pending');
 
   useEffect(() => {
     fetchOrders();
@@ -68,6 +69,20 @@ const InPlaceOrders: React.FC = () => {
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold text-gray-900 mb-8">In-Place Orders</h1>
+      <div className="mb-4 flex items-center gap-2">
+        <label className="font-medium">Filter Status:</label>
+        <select
+          value={statusFilter}
+          onChange={e => setStatusFilter(e.target.value as any)}
+          className="border px-2 py-1 rounded"
+        >
+          <option value="all">All</option>
+          <option value="pending">Pending</option>
+          <option value="processing">Processing</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
       <div className="overflow-x-auto rounded-lg shadow-lg bg-white">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gradient-to-r from-blue-50 to-green-50">
@@ -81,7 +96,13 @@ const InPlaceOrders: React.FC = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {orders.map((order, idx) => (
+            {orders
+              .filter(order =>
+                statusFilter === 'all'
+                  ? order.status !== 'completed' && order.status !== 'cancelled'
+                  : order.status === statusFilter
+              )
+              .map((order, idx) => (
               <tr
                 key={order._id}
                 className="transition-all duration-300 ease-in-out hover:bg-blue-50 animate-fadeIn"

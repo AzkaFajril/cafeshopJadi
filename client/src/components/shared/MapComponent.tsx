@@ -10,11 +10,13 @@ mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 interface MapComponentProps {
   onCoordChange?: (value: LatLng) => void;
   interactive?: boolean;
+  initialCoord?: LatLng | null;
 }
 
 const MapComponent: React.FC<MapComponentProps> = ({
   onCoordChange,
   interactive = true,
+  initialCoord,
 }) => {
   // Auth Provider
   const { address } = useUserAddress();
@@ -27,7 +29,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
       return;
     } // initialize map only once
 
-    const initLoc = address?.coordinates || defaultCoordinate;
+    const initLoc = initialCoord || address?.coordinates || defaultCoordinate;
     map.current = new mapboxgl.Map({
       container: mapContainer.current!,
       style: 'mapbox://styles/mapbox/streets-v12',
@@ -47,7 +49,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
       });
     }
 
-  });
+  }, [initialCoord, address?.coordinates, defaultCoordinate, interactive, onCoordChange]);
 
   return (
     <div className="relative w-full h-full">

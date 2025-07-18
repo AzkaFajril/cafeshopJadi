@@ -1,32 +1,21 @@
 const Order = require('../models/Order');
 const Product = require('../models/Product'); // pastikan sudah di-import
+const mongoose = require('mongoose');
 
 exports.createOrder = async (req, res) => {
   try {
-    // Ambil items dari request
-    const orderItems = req.body.items;
+    const { userId, items, paymentMethod, totalPayment } = req.body;
+    if (!userId) return res.status(400).json({ success: false, message: 'userId is required' });
+    if (!items || !Array.isArray(items) || items.length === 0) return res.status(400).json({ success: false, message: 'items is required' });
+    if (!paymentMethod) return res.status(400).json({ success: false, message: 'paymentMethod is required' });
+    if (!totalPayment) return res.status(400).json({ success: false, message: 'totalPayment is required' });
 
-    // Tambahkan image ke setiap item
-    const itemsWithImage = await Promise.all(
-      orderItems.map(async (item) => {
-        const product = await Product.findById(item.productId);
-        return {
-          ...item,
-          image: product?.image || '', // ambil gambar dari DB
-        };
-      })
-    );
-
-    // Generate unique orderId (6 hex chars)
     const crypto = require('crypto');
     const orderId = crypto.randomBytes(3).toString('hex');
-    // Buat order baru dengan items yang sudah ada image
     const order = new Order({
       ...req.body,
-      items: itemsWithImage,
       orderId,
     });
-
     await order.save();
     res.status(201).json({ success: true, order });
   } catch (err) {
@@ -81,6 +70,27 @@ exports.getInPlaceOrders = async (req, res) => {
     });
     res.json(orders);
   } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Endpoint untuk ambil order history user
+exports.getOrdersByUser = async (req, res) => {
+  try {
+    const { userId } = req.query;
+    if (!userId) return res.json([]);
+    let query = { userId };
+    // Tambahkan pengecekan tipe:
+    if (mongoose.Types.ObjectId.isValid(userId)) {
+      // Cek apakah userId di database bertipe ObjectId
+      query = { userId: userId };
+      // Jika di database userId bertipe ObjectId, gunakan baris ini:
+      // query = { userId: mongoose.Types.ObjectId(userId) };
+    }
+    const orders = await Order.find(query).sort({ date: -1 });
+    res.json(orders);
+  } catch (err) {
+    console.error('getOrdersByUser error:', err);
     res.status(500).json({ error: err.message });
   }
 };
