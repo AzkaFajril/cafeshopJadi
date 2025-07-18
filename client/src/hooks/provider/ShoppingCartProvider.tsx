@@ -12,11 +12,12 @@ const ShoppingCartProvider: React.FC<ShoppingCartProviderProps> = ({
   children,
 }) => {
   const [items, setItems] = useState<CartItem[]>([]);
-  const [deliOption, setDeliOption] = useState(DeliOption.DELIVER);
+  const [deliOption, setDeliOption] = useState(DeliOption.IN_PLACE);
   const [paymentMethod, setPaymentMethod] = useState(PaymentMethod.CASH);
 
   const cartItemIds = items?.map((ci) => ci.product.id);
   const itemCount = items.length;
+  
   const subTotal = getSumFromArr(
     items?.map((item) => {
       const productWithSizes = item.product as any;

@@ -10,9 +10,9 @@ export default function useOrders() {
   useEffect(() => {
     const getData = async () => {
       setLoding(true);
-      await fakeTimer(1000);
-      const res = getOrderList();
-      setData(res);
+      const res = await fetch('http://localhost:5000/api/orders');
+      const orders = await res.json();
+      setData(orders);
       setLoding(false);
     };
     getData();

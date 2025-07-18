@@ -30,12 +30,16 @@ export const coffeeSizeOptions = [
 
 export const deliOptions = [
   {
+    value: DeliOption.IN_PLACE,
+    label: "In Place",
+  },
+  {
     value: DeliOption.DELIVER,
-    label: 'Deliver',
+    label: "Deliver",
   },
   {
     value: DeliOption.PICK_UP,
-    label: 'Pick Up',
+    label: "Pick Up",
   },
 ];
 

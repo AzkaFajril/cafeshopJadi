@@ -1,6 +1,7 @@
 const Stripe = require('stripe');
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 const Payment = require('../models/Payment');
+const User = require('../models/User');
 
 // Create payment intent for Stripe
 exports.createPaymentIntent = async (req, res) => {
@@ -29,14 +30,27 @@ exports.createOrder = async (req, res) => {
       deliveryOption
     } = req.body;
 
+    let userId = req.user._id;
+    if (!userId && req.user.email) {
+      // Cari user dari email jika _id tidak ada di token
+      const user = await User.findOne({ email: req.user.email });
+      if (!user) {
+        return res.status(400).json({ error: 'User not found' });
+      }
+      userId = user._id;
+    }
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID not found in token' });
+    }
+
     const order = await Payment.create({
-      userId: req.user._id,
+      userId,
       items,
       totalAmount,
       paymentMethod,
       deliveryAddress,
       deliveryOption,
-      status: 'pending'
+      status: 'completed' // AUTO PAYMENT LANGSUNG COMPLETED
     });
 
     // Populate user details

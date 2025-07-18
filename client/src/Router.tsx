@@ -21,6 +21,9 @@ import AdminProducts from './pages/admin/Products';
 import AdminUsers from './pages/admin/Users';
 import AdminOrders from './pages/admin/Orders';
 import UploadMenu from './components/admin/uplloadmenu';
+import PrintQRTable from './hooks/provider/ModalProvider/CheckoutModal12/PrintQRTable';
+import BuyPage from './hooks/provider/beli/BuyPage';
+import InPlaceOrders from './pages/admin/InPlaceOrders';
 
 export default function Router() {
   return (
@@ -43,6 +46,7 @@ export default function Router() {
       </Route>
       {/* Admin */}
       <Route path="/admin/login" element={<AdminLoginPage />} />
+      <Route path="/print-qr" element={<PrintQRTable />} />
       <Route
         path="/admin"
         element={
@@ -55,6 +59,7 @@ export default function Router() {
         <Route path="products" element={<AdminProducts />} />
         <Route path="users" element={<AdminUsers />} />
         <Route path="orders" element={<AdminOrders />} />
+        <Route path="/admin/inplace-orders" element={<InPlaceOrders />} />
       </Route>
     </Routes>
   );

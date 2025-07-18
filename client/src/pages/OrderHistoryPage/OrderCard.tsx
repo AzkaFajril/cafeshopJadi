@@ -11,7 +11,7 @@ export default function OrderCard({ order }: OrderCardProps) {
   const orderItemsText = order?.items?.map((i)=>`${i.quantity}x ${i.productName}`)?.join(", ");
   return (
     <Link
-      to={`/orders/${order.id}`}
+      to={`/orders/${order._id}`}
       className="w-full flex gap-2 bg-white hover:bg-primary-50 p-1 rounded-lg"
     >
       <div className="w-16 h-16 bg-gray-300 rounded-lg overflow-hidden">
@@ -22,7 +22,7 @@ export default function OrderCard({ order }: OrderCardProps) {
       </div>
       <div className="w-full flex flex-col gap-1 justify-between">
         <div className="flex justify-between gap-2 font-semibold">
-          <h6 className="text-gray-800 line-clamp-1">{`#${order.id}`}</h6>
+          <h6 className="text-gray-800 line-clamp-1">{`#${order.orderId}`}</h6>
           <p className="text-primary">{priceWithSign(order.totalPayment)}</p>
         </div>
         <span className="text-gray-400 text-xs font-semibold">

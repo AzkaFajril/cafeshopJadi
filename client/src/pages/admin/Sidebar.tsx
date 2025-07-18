@@ -18,6 +18,7 @@ const Sidebar: React.FC = () => {
     { name: 'Products', icon: PhotoIcon, path: '/admin/products' },
     { name: 'Users', icon: UsersIcon, path: '/admin/users' },
     { name: 'Orders', icon: ShoppingBagIcon, path: '/admin/orders' },
+    { name: 'In-Place Orders', icon: ShoppingBagIcon, path: '/admin/inplace-orders' },
     { name: 'Analytics', icon: ChartBarIcon, path: '/admin/analytics' },
     { name: 'Settings', icon: Cog6ToothIcon, path: '/admin/settings' },
   ];

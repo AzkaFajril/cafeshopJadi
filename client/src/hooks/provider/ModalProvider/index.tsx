@@ -4,7 +4,7 @@ import CartModal from './CartModal';
 import { CoffeeProduct, DeliveryOrder } from '@/types';
 import ProductDetailModal from './ProductDetailModal';
 import AddressModal from './AddressModal';
-import CheckoutModal from './CheckoutModal';
+import CheckoutModal from './CheckoutModal12';
 import OrderStatusModal from './OrderStatusModal';
 
 interface ModalProviderProps {

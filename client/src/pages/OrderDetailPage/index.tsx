@@ -25,9 +25,20 @@ export default function OrderDetailPage() {
             <OrderQR />
             <OrderInfos order={data} />
             <hr className="my-4" />
-            <OrderSummary orderItems={data.items} />
+            <OrderSummary order={data} />
             <hr className="my-4" />
             <OrderPaymentMethod method={data.paymentMethod} />
+            <div>
+              <div>
+                <b>Order ID</b>: {data.orderId}
+              </div>
+              <div>
+                <b>Order Date</b>: {data.date}
+              </div>
+              <div>
+              <b>Delivery Type</b>: {data?.deliveryType || data?.deliOption || data?.orderType}
+              </div>
+            </div>
           </div>
         )}
       </div>

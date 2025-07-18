@@ -43,6 +43,7 @@ export interface CartItem {
 export enum DeliOption {
   DELIVER = 'delivery',
   PICK_UP = 'pick-up',
+  IN_PLACE = 'in-place',
 }
 
 export enum PaymentMethod {
@@ -73,13 +74,17 @@ export interface OrderItem {
 
 export interface DeliveryOrder {
   id: string;
-  customer: Customer;
+  _id?: string; // MongoDB document id
+  orderId?: string; // Short order code
+  customer?: Customer;
   items: OrderItem[];
   deliOption: DeliOption;
   paymentMethod: PaymentMethod;
   totalPayment: number;
   date: string;
   image: string;
+  orderType?: string;
+  tableNumber?: string;
 }
 
 export type HeroIcon = React.ComponentType<

@@ -29,6 +29,7 @@ export default function OrderStatusModal({
                 <div>
                   <strong>Order ID:</strong> {order.id}
                 </div>
+                
                 <div>
                   <strong>Order Time:</strong> {order.date}
                 </div>

@@ -28,12 +28,12 @@ export function getOrderList(): DeliveryOrder[] {
   }
 }
 
-export function getOrderById(id: string): DeliveryOrder | null {
+export async function getOrderById(id: string): Promise<DeliveryOrder | null> {
   try {
-    const orders = getOrderList();
-
-    const order = orders?.filter((o) => o.id === id)?.[0];
-    return order?.id ? order : null;
+    const res = await fetch(`http://localhost:5000/api/orders/${id}`);
+    if (!res.ok) return null;
+    const order = await res.json();
+    return order;
   } catch (err) {
     console.log('Error:: getOrderById :', err);
     return null;
@@ -55,16 +55,16 @@ const shortRandomUUID = (): string => {
   return uuid.split('-').join('').substring(0, 8);
 };
 
-const makeFakeOrder = (newOrder: TAddOrder): DeliveryOrder => {
-  // Id
+const makeFakeOrder = async (newOrder: TAddOrder): Promise<DeliveryOrder> => {
   const id = shortRandomUUID();
-  // Date
   const currentDate = new Date();
   const date = currentDate.toLocaleString('en-US');
-  // Image
   const firstItem = newOrder.items[0];
-  const image = getCoffeeById(firstItem.productId).image;
-
+  let image = '';
+  if (firstItem && firstItem.productId) {
+    const product = await getCoffeeById(firstItem.productId);
+    image = product.image;
+  }
   return {
     ...newOrder,
     id,
@@ -97,4 +97,16 @@ export function removeAllOrders(): void {
   } catch (err) {
     console.log('Error:: removeAllOrders :', err);
   }
+}
+
+export async function createOrder(orderData: any) {
+  const response = await fetch('http://localhost:5000/api/orders', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(orderData),
+  });
+  if (!response.ok) throw new Error('Gagal membuat order');
+  return response.json();
 }
